@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Andru & María | Nuestra Historia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #c5a059;
+            --dark: #0a0a0a;
+            --light: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark);
+            color: white;
+            overflow: hidden; /* Se habilita al final */
+        }
+
+        /* --- SISTEMA DE ETAPAS --- */
+        .stage {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 100;
+            background-color: var(--dark);
+        }
+
+        .active { display: flex; animation: fadeIn 0.5s ease forwards; }
+
+        /* --- VIDEO Y FONDO --- */
+        #video-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            display: none;
+        }
+
+        video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.35) contrast(1.1);
+        }
+
+        .overlay-final {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+        }
+
+        /* --- UI COMÚN --- */
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 3px;
+            font-weight: 400;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.9);
+        }
+
+        .divider {
+            width: 50px;
+            height: 1px;
+            background-color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .btn-elegant {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 14px 35px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-elegant:hover { background: var(--primary); color: white; }
+
+        input[type="date"] {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--primary);
+            padding: 12px 15px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+        }
+
+        /* --- PÁGINA FINAL (CORREGIDA) --- */
+        #final-content {
+            display: none;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-view {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px 0;
+        }
+
+        .time-item { 
+            border-left: 1px solid rgba(197, 160, 89, 0.4); 
+            padding: 15px 5px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        .time-val { 
+            display: block; 
+            font-size: 1.5rem; 
+            color: var(--primary); 
+            font-family: 'Playfair Display', serif;
+            text-shadow: 1px 1px 10px rgba(0,0,0,0.8);
+        }
+
+        .time-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+
+        .comparison-box {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 650px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            font-style: italic;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .dedication-section {
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 100px 25px;
+            text-align: center;
+        }
+
+        .dedication-text {
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 2.3;
+            font-size: 1.2rem;
+            font-style: italic;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .signature-area { margin-top: 50px; }
+        .signature-names {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-top: 10px;
+        }
+
+        /* --- CONTADOR BROMAS --- */
+        #prank-timer {
+            font-size: 5rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(197, 160, 89, 0.5);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 650px) {
+            .time-grid { grid-template-columns: repeat(3, 1fr); }
+            h1 { font-size: 2rem; }
+            .dedication-text { font-size: 1.1rem; }
+            .time-val { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- YOUTUBE PLAYER -->
+    <div id="yt-player-container" style="position: absolute; top:-1000px"></div>
+
+    <!-- AUDIO BROMA -->
+    <audio id="prank-audio" preload="auto">
+        <source src="https://res.cloudinary.com/dv12c2xfn/video/upload/v1766814275/WhatsApp_Audio_2025-12-27_at_1.43.53_AM_esjsqe.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- VIDEO FINAL (SILENCIADO) -->
+    <div id="video-container">
+        <video id="bg-video" loop muted playsinline>
+            <source src="https://res.cloudinary.com/dv12c2xfn/video/upload/v1766809557/Generar_Video_Para_Regalo_De_Aniversario_dpgql1.mp4" type="video/mp4">
+        </video>
+        <div class="overlay-final"></div>
+    </div>
+
+    <!-- ETAPA 1: EL AÑO -->
+    <section id="stage-1" class="stage active">
+        <h1>¿En qué año comenzó su historia?</h1>
+        <div class="divider"></div>
+        <p style="font-size: 0.75rem; letter-spacing: 3px; opacity: 0.7; margin-bottom: 15px;">Nuestra historia comenzó el:</p>
+        <input type="date" id="date-input">
+        <button class="btn-elegant" onclick="startJokes()">Continuar</button>
+    </section>
+
+    <!-- ETAPA 2: LAS PREGUNTAS -->
+    <section id="stage-jokes" class="stage">
+        <h2 id="joke-title">¿Estás seguro?</h2>
+        <p id="joke-desc" style="font-style: italic; opacity: 0.7; margin-bottom: 20px;">Mmm... piénsalo bien.</p>
+        <button class="btn-elegant" id="joke-btn" onclick="handleJokes()">Sí, estoy seguro</button>
+    </section>
+
+    <!-- ETAPA 3: LA ESPERA / BROMA -->
+    <section id="stage-waiting" class="stage">
+        <h1>¡Ah, se me olvidaba!</h1>
+        <div class="divider"></div>
+        <p id="waiting-p" style="margin-bottom: 20px; opacity: 0.8; font-style: italic;">Para continuar, necesitamos un poco de ambiente...</p>
+        
+        <button class="btn-elegant" id="btn-prank-trigger" onclick="runPrankSequence()">Presiona aquí para continuar 🎵</button>
+        
+        <div id="countdown-container" style="display:none">
+            <div id="prank-timer">10</div>
+            <p style="letter-spacing: 5px; opacity: 0.5;">PREPARANDO MOMENTO...</p>
+        </div>
+
+        <div id="prank-result" style="display:none">
+            <p style="color: var(--primary); font-style: italic; margin-bottom: 20px; font-size: 1.1rem;">¡Ups! Esa no era... me equivoqué de cassette.</p>
+            <button class="btn-elegant" onclick="finalReveal()">Ok, presiona una vez más y ya</button>
+        </div>
+    </section>
+
+    <!-- PÁGINA FINAL -->
+    <main id="final-content">
+        <section class="hero-view">
+            <p style="letter-spacing: 8px; font-size: 0.7rem; opacity: 0.8; margin-bottom: 10px; text-shadow: 1px 1px 5px black;">CELEBRANDO UN CAMINO JUNTOS</p>
+            <h1 style="font-size: clamp(2.2rem, 8vw, 4rem);">Andru <span style="color:var(--primary); font-style:italic;">&</span> María</h1>
+            <div class="divider"></div>
+            
+            <div class="time-grid">
+                <div class="time-item"><span class="time-val" id="y">0</span><span class="time-label">Años</span></div>
+                <div class="time-item"><span class="time-val" id="mt">0</span><span class="time-label">Meses</span></div>
+                <div class="time-item"><span class="time-val" id="w">0</span><span class="time-label">Semanas</span></div>
+                <div class="time-item"><span class="time-val" id="d">0</span><span class="time-label">Días</span></div>
+                <div class="time-item"><span class="time-val" id="h">0</span><span class="time-label">Horas</span></div>
+                <div class="time-item"><span class="time-val" id="m">0</span><span class="time-label">Minutos</span></div>
+                <div class="time-item"><span class="time-val" id="s">0</span><span class="time-label">Segundos</span></div>
+            </div>
+
+            <div class="comparison-box" id="dimension-box"></div>
+            
+            <a href="#dedication" style="margin-top: 30px; color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; opacity: 0.8; border: 1px solid var(--primary); padding: 12px 25px; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);">DESLIZA PARA LEER</a>
+        </section>
+
+        <section id="dedication" class="dedication-section">
+            <div class="dedication-text">
+                "Hay historias que se escriben con tinta, pero la suya se escribe con cada paso que dan juntos. 
+                No celebramos solo el tiempo que ha pasado, sino la valentía de elegirse cada mañana, 
+                de convertir lo cotidiano en algo extraordinario y de cuidar ese brillo en sus ojos que solo aparece 
+                cuando el uno mira al otro. <br><br>
+                Que el respeto siga siendo su brújula y su risa el mejor refugio del mundo. Su amor no se mide 
+                en años, se mide en la huella que dejan en el corazón de quienes tenemos la suerte de verlos caminar."
+            </div>
+            
+            <div class="signature-area">
+                <p style="font-size: 0.8rem; letter-spacing: 3px; opacity: 0.6; text-transform: uppercase;">Saludos y abrazos desde la distancia, sus amigos:</p>
+                <div class="signature-names">John & Maria</div>
+            </div>
+            <p style="margin-top: 40px; font-size: 0.7rem; opacity: 0.3; letter-spacing: 5px;">ETERNAMENTE CÓMPLICES</p>
+        </section>
+    </main>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        lucide.createIcons();
+
+        // --- SETUP FECHA ---
+        const dateInput = document.getElementById('date-input');
+        const nowObj = new Date();
+        dateInput.value = `${nowObj.getFullYear()}-12-27`;
+
+        // --- YOUTUBE API ---
+        let ytPlayer;
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player-container', {
+                height: '0', width: '0',
+                videoId: 'ucZ6J-fXQeI',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 },
+                events: { 'onReady': () => console.log("Música real cargada") }
+            });
+        }
+
+        // --- BROMAS ---
+        let jokeCounter = 0;
+        const jokes = [
+            { t: "¿Estás seguro?", d: "Mmm... piénsalo bien.", b: "Sí, estoy seguro" },
+            { t: "Revisa bien...", d: "¿De verdad esa es la fecha? No quiero errores.", b: "Revisado, vamos" },
+            { t: "No me convences...", d: "Mejor pregúntale a María, ella seguro se acuerda mejor.", b: "Ya le pregunté, es esta" },
+            { t: "Ok, ok...", d: "Presiona una vez más y ya. Prometido.", b: "Último click" }
+        ];
+
+        function startJokes() {
+            if(!dateInput.value) return;
+            document.getElementById('stage-1').classList.remove('active');
+            document.getElementById('stage-jokes').classList.add('active');
+        }
+
+        function handleJokes() {
+            jokeCounter++;
+            if(jokeCounter < jokes.length) {
+                document.getElementById('joke-title').innerText = jokes[jokeCounter].t;
+                document.getElementById('joke-desc').innerText = jokes[jokeCounter].d;
+                document.getElementById('joke-btn').innerText = jokes[jokeCounter].b;
+            } else {
+                document.getElementById('stage-jokes').classList.remove('active');
+                document.getElementById('stage-waiting').classList.add('active');
+            }
+        }
+
+        // --- SECUENCIA DE BROMA MUSICAL ---
+        function runPrankSequence() {
+            document.getElementById('btn-prank-trigger').style.display = 'none';
+            document.getElementById('waiting-p').style.display = 'none';
+            document.getElementById('countdown-container').style.display = 'block';
+
+            const audio = document.getElementById('prank-audio');
+            const timerEl = document.getElementById('prank-timer');
+            let timeLeft = 10;
+
+            audio.play();
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(countdown);
+                    audio.pause();
+                    document.getElementById('countdown-container').style.display = 'none';
+                    document.getElementById('prank-result').style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        // --- REVELACIÓN FINAL ---
+        function finalReveal() {
+            if(ytPlayer && ytPlayer.playVideo) ytPlayer.playVideo();
+
+            document.getElementById('stage-waiting').classList.remove('active');
+            document.getElementById('video-container').style.display = 'block';
+            document.getElementById('final-content').style.display = 'block';
+            document.body.style.overflow = 'auto';
+
+            const video = document.getElementById('bg-video');
+            video.play();
+
+            initCounter();
+            spawnHearts();
+        }
+
+        // --- CÁLCULOS ---
+        function initCounter() {
+            const start = new Date(dateInput.value);
+            setInterval(() => {
+                const now = new Date();
+                const diff = now - start;
+                if(diff < 0) return;
+
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                const weeks = (days / 7).toFixed(1);
+                const monthsTotal = (days / 30.44).toFixed(1);
+                const yearsTotal = (days / 365.25).toFixed(1);
+
+                document.getElementById('y').innerText = yearsTotal;
+                document.getElementById('mt').innerText = Number(monthsTotal).toLocaleString();
+                document.getElementById('w').innerText = Number(weeks).toLocaleString();
+                document.getElementById('d').innerText = days.toLocaleString();
+                document.getElementById('h').innerText = hours.toLocaleString();
+                document.getElementById('m').innerText = minutes.toLocaleString();
+                document.getElementById('s').innerText = seconds.toLocaleString();
+
+                const heart = (seconds * 1.15).toLocaleString(undefined, {maximumFractionDigits:0});
+                const coffee = (days * 1.2).toFixed(0);
+                
+                document.getElementById('dimension-box').innerHTML = `
+                    En este tiempo, sus corazones han latido juntos más de <b>${heart}</b> veces. 
+                    Han compartido aproximadamente <b>${coffee}</b> tazas de café y sueños, 
+                    mientras la Tierra ha dado <b>${days.toLocaleString()}</b> vueltas mientras ustedes se elegían cada mañana.
+                `;
+            }, 1000);
+        }
+
+        // --- CORAZONES ---
+        function spawnHearts() {
+            setInterval(() => {
+                const h = document.createElement('div');
+                h.style.position = 'fixed';
+                h.style.color = 'var(--primary)';
+                h.style.pointerEvents = 'none';
+                h.style.zIndex = '99';
+                h.style.opacity = '0.5';
+                h.innerHTML = '<i data-lucide="heart" style="fill: currentColor; width: 16px;"></i>';
+                h.style.left = Math.random() * 100 + "vw";
+                h.style.top = "110vh";
+                h.style.transition = "transform 6s linear, opacity 6s";
+                document.body.appendChild(h);
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    h.style.transform = `translateY(-120vh) rotate(${Math.random() * 360}deg) scale(${Math.random() * 1.5})`;
+                    h.style.opacity = '0';
+                }, 100);
+
+                setTimeout(() => h.remove(), 7000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
+
